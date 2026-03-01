@@ -2,8 +2,8 @@
 
 ## 环境设置
 
-1. 确保已下载`mathtype`，并且word中存在相关宏命令`MTCommand_ConvertEqns`
-  - `mathtype`设置如图所示，[fig1](fig\mathtype_option01.png)、[fig2](fig\mathtype_option02.png)
+1. 确保已下载`mathtype`，并且word中存在相关宏命令`MTCommand_ConvertEqns`。
+    - `mathtype`设置如图所示，[fig1](fig\mathtype_option01.png)、[fig2](fig\mathtype_option02.png)
 2. Windows 系统。
 3. 本机安装 Microsoft Word。
 4. Python 3
