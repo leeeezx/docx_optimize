@@ -1,4 +1,4 @@
-Attribute VB_Name = "公式转换MathML至OMML"
+Attribute VB_Name = "equation_trans"
 Sub PlainMathMLToEquation()
     Dim xmlns As String, mathText As String
     xmlns = "xmlns=""http://www.w3.org/1998/Math/MathML"""
@@ -139,4 +139,6 @@ Sub ReplaceExactInAllStories(ByVal findText As String)
         Set rng = rng.NextStoryRange
     Loop
 End Sub
+
+
 
