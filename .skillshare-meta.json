@@ -1,8 +1,0 @@
-{
-  "source": "github.com/anthropics/skills/skills\\docx",
-  "type": "github-subdir",
-  "installed_at": "2026-02-22T11:03:32.5478145+08:00",
-  "repo_url": "https://github.com/anthropics/skills.git",
-  "subdir": "skills/docx",
-  "version": "1ed29a0"
-}

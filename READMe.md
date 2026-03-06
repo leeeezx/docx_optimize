@@ -1,5 +1,11 @@
 # READMe
 
+**本skill为对`anthropics/skills.git/skills/docx`的优化版本**
+
+**主要优化点：**
+1. 通过添加word宏命令与py脚本的结合，解决了原版本中`mathtype`公式无法转换的问题。
+
+
 ## 环境设置
 
 1. 确保已下载`mathtype`，并且word中存在相关宏命令`MTCommand_ConvertEqns`。
