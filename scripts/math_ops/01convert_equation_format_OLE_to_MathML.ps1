@@ -8,6 +8,18 @@
 Set-StrictMode -Version Latest
 $ErrorActionPreference = "Stop"
 
+function Write-InfoMessage([string]$Message) {
+    Write-Host $Message -ForegroundColor Cyan
+}
+
+function Write-SuccessMessage([string]$Message) {
+    Write-Host $Message -ForegroundColor Green
+}
+
+function Write-NoticeMessage([string]$Message) {
+    Write-Host $Message -ForegroundColor Yellow
+}
+
 function Select-WordFile {
     Add-Type -AssemblyName System.Windows.Forms
     $dlg = New-Object System.Windows.Forms.OpenFileDialog
@@ -225,7 +237,7 @@ $source = (Resolve-Path -LiteralPath $DocPath).Path
 $target = Get-OutputPath -SourcePath $source -CustomOutPath $OutPath
 
 Copy-Item -LiteralPath $source -Destination $target -Force
-Write-Host "已创建副本：$target"
+Write-InfoMessage "已创建副本：$target"
 
 $word = $null
 $doc = $null
@@ -240,18 +252,18 @@ try {
 
     $toFrontOk = Bring-WordToFrontStrong -WordApp $word
     if ($toFrontOk) {
-        Write-Host "Word 已尝试置前。"
+        Write-SuccessMessage "Word 已尝试置前。"
     }
     else {
-        Write-Host "提示：Windows 前台策略仍可能阻止置前，请手动点击任务栏 Word。"
+        Write-NoticeMessage "提示：Windows 前台策略仍可能阻止置前，请手动点击任务栏 Word。"
     }
 
-    Write-Host "开始执行宏：$MacroName"
-    Write-Host "请在 Word 弹窗中手动确认。"
+    Write-NoticeMessage "开始执行宏：$MacroName"
+    Write-NoticeMessage "请在 Word 弹窗中手动确认。"
     [void]$word.Run($MacroName)
 
     $doc.Save()
-    Write-Host "执行完成，输出文件：$target"
+    Write-SuccessMessage "执行完成，输出文件：$target"
 }
 catch {
     throw ("执行失败：" + $_.Exception.Message)

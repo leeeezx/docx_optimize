@@ -14,11 +14,56 @@
 from __future__ import annotations
 
 import argparse
+import os
 import shlex
 import shutil
 import subprocess
 import sys
 from pathlib import Path
+
+
+def _supports_color() -> bool:
+    return sys.stdout.isatty() or bool(os.getenv("WT_SESSION")) or bool(os.getenv("TERM"))
+
+
+USE_COLOR = _supports_color()
+RESET = "\033[0m"
+CYAN = "\033[96m"
+BLUE = "\033[94m"
+GREEN = "\033[92m"
+YELLOW = "\033[93m"
+RED = "\033[91m"
+GRAY = "\033[90m"
+
+
+def colorize(text: str, color: str) -> str:
+    if not USE_COLOR:
+        return text
+    return f"{color}{text}{RESET}"
+
+
+def print_step(text: str) -> None:
+    print(colorize(text, CYAN))
+
+
+def print_info(text: str) -> None:
+    print(colorize(text, BLUE))
+
+
+def print_notice(text: str) -> None:
+    print(colorize(text, YELLOW))
+
+
+def print_success(text: str) -> None:
+    print(colorize(text, GREEN))
+
+
+def print_error(text: str) -> None:
+    print(colorize(text, RED), file=sys.stderr)
+
+
+def print_command(text: str) -> None:
+    print(colorize(text, GRAY))
 
 
 def build_parser() -> argparse.ArgumentParser:
@@ -95,15 +140,16 @@ def run_check(check_script: Path, doc_path: Path, show_details: bool) -> int:
     if show_details:
         cmd.append("--show-details")
 
-    print(f"[步骤 1/3] 检查 OLE：{' '.join(shlex.quote(c) for c in cmd)}")
+    print_step("[步骤 1/3] 检查 OLE")
+    print_command("即将执行： " + " ".join(shlex.quote(c) for c in cmd))
     completed = subprocess.run(cmd)
     return completed.returncode
 
 
 def run_ps_blocking(cmd: list[str], step_title: str) -> int:
-    print(step_title)
-    print("即将执行：", " ".join(shlex.quote(c) for c in cmd))
-    print("提示：若 Word 出现弹窗，请手动点击确认，脚本会等待直到该步骤结束。")
+    print_step(step_title)
+    print_command("即将执行： " + " ".join(shlex.quote(c) for c in cmd))
+    print_notice("提示：若 Word 出现弹窗，请手动点击确认，脚本会等待直到该步骤结束。")
     proc = subprocess.Popen(cmd)
     return proc.wait()
 
@@ -118,23 +164,23 @@ def main() -> int:
 
     for p in (check_script, step1_script, step2_script):
         if not p.exists():
-            print(f"错误：缺少脚本 -> {p}", file=sys.stderr)
+            print_error(f"错误：缺少脚本 -> {p}")
             return 2
 
     try:
         source = Path(args.file).expanduser().resolve()
         ensure_supported_doc(source)
     except Exception as exc:
-        print(f"错误：输入文件不合法，原因：{exc}", file=sys.stderr)
+        print_error(f"错误：输入文件不合法，原因：{exc}")
         return 2
 
     check_rc = run_check(check_script, source, args.show_check_details)
     if check_rc == 2:
-        print("错误：OLE 检查执行失败，流程中止。", file=sys.stderr)
+        print_error("错误：OLE 检查执行失败，流程中止。")
         return 2
     if check_rc == 0 and not args.continue_if_not_found:
-        print("未检测到 MathType OLE，对安全起见默认停止。")
-        print("如需强制继续，请增加参数：--continue-if-not-found")
+        print_notice("未检测到 MathType OLE，对安全起见默认停止。")
+        print_info("如需强制继续，请增加参数：--continue-if-not-found")
         return 0
 
     ps_exe = choose_ps_exe()
@@ -158,10 +204,10 @@ def main() -> int:
 
     step1_rc = run_ps_blocking(step1_cmd, "[步骤 2/3] OLE -> MathML")
     if step1_rc != 0:
-        print(f"错误：步骤 2 执行失败，退出码={step1_rc}", file=sys.stderr)
+        print_error(f"错误：步骤 2 执行失败，退出码={step1_rc}")
         return step1_rc
     if not step1_out.exists():
-        print(f"错误：步骤 2 未生成输出文件：{step1_out}", file=sys.stderr)
+        print_error(f"错误：步骤 2 未生成输出文件：{step1_out}")
         return 2
 
     # 第 2 步输出：默认基于 step1_out 生成 *_OMML*
@@ -192,13 +238,13 @@ def main() -> int:
 
     step2_rc = run_ps_blocking(step2_cmd, "[步骤 3/3] MathML -> OMML")
     if step2_rc != 0:
-        print(f"错误：步骤 3 执行失败，退出码={step2_rc}", file=sys.stderr)
+        print_error(f"错误：步骤 3 执行失败，退出码={step2_rc}")
         return step2_rc
     if not final_out.exists():
-        print(f"错误：步骤 3 未生成输出文件：{final_out}", file=sys.stderr)
+        print_error(f"错误：步骤 3 未生成输出文件：{final_out}")
         return 2
 
-    print(f"全部完成，最终输出：{final_out}")
+    print_success(f"全部完成，最终输出：{final_out}")
     return 0
 
 
