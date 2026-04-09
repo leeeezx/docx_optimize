@@ -40,8 +40,8 @@ MathType 设置参考图：
 
 | 图示 | 路径 |
 |---|---|
-| 图 1 | [fig/mathtype_option01.png](/E:/Dev/skill_creat/docx_optimize/fig/mathtype_option01.png) |
-| 图 2 | [fig/mathtype_option02.png](/E:/Dev/skill_creat/docx_optimize/fig/mathtype_option02.png) |
+| 图 1 | [fig/mathtype_option01.png](fig/mathtype_option01.png) |
+| 图 2 | [fig/mathtype_option02.png](fig/mathtype_option02.png) |
 
 ---
 
@@ -67,8 +67,8 @@ pwsh -ExecutionPolicy Bypass -File scripts\packaging\test_dotm.ps1
 
 | 文档 | 作用 |
 |---|---|
-| [docs/安装说明.md](/E:/Dev/skill_creat/docx_optimize/docs/安装说明.md) | 面向用户的安装与使用步骤 |
-| [docs/全局_dotm_任务列表.md](/E:/Dev/skill_creat/docx_optimize/docs/全局_dotm_任务列表.md) | 当前全局 `.dotm` 改造任务拆解 |
+| [docs/安装说明.md](docs/安装说明.md) | 面向用户的安装与使用步骤 |
+| [docs/全局_dotm_任务列表.md](docs/全局_dotm_任务列表.md) | 当前全局 `.dotm` 改造任务拆解 |
 
 ---
 
